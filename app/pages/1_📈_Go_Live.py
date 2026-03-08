@@ -3,6 +3,9 @@
 Displays market data, runs ETL + model, and shows predictions.
 """
 
+import base64
+import os
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -32,6 +35,21 @@ with st.sidebar:
         format_func=lambda t: f"{TICKERS[t]['icon']} {t} — {TICKERS[t]['name']}",
     )
 
+    # Show selected company's header logo below the dropdown
+    _sb_info = TICKERS[selected_ticker]
+    _sb_logo_path = os.path.join(os.path.dirname(__file__), "..", _sb_info.get("header_image", ""))
+    if os.path.isfile(_sb_logo_path):
+        with open(_sb_logo_path, "rb") as _f:
+            _sb_data = base64.b64encode(_f.read()).decode()
+        _sb_ext = _sb_logo_path.rsplit(".", 1)[-1].lower()
+        _sb_mime = "image/jpeg" if _sb_ext in ("jpg", "jpeg") else f"image/{_sb_ext}"
+        st.markdown(
+            f'<div style="text-align:center;padding:0.5rem 0;">'
+            f'<img src="data:{_sb_mime};base64,{_sb_data}" '
+            f'style="max-width:100%;max-height:36px;object-fit:contain;" /></div>',
+            unsafe_allow_html=True,
+        )
+
     lookback_days = st.slider(
         "Historical Data (trading days)",
         min_value=60, max_value=504, value=252, step=20,
@@ -54,10 +72,28 @@ with st.sidebar:
 # ── Page Header ──────────────────────────────────────────────────────
 ticker_info = TICKERS[selected_ticker]
 
+
+def _load_ticker_logo(image_path: str, size: int = 72) -> str:
+    """Return a base64 <img> tag for the company logo, or empty string if not found."""
+    abs_path = os.path.join(os.path.dirname(__file__), "..", image_path)
+    if os.path.isfile(abs_path):
+        with open(abs_path, "rb") as f:
+            data = base64.b64encode(f.read()).decode()
+        ext = abs_path.rsplit(".", 1)[-1].lower()
+        mime = "image/jpeg" if ext in ("jpg", "jpeg") else f"image/{ext}"
+        return (
+            f'<img src="data:{mime};base64,{data}" '
+            f'style="width:{size}px;height:{size}px;object-fit:contain;margin-bottom:0.5rem;" />'
+        )
+    return f'<span style="font-size:3rem;">{ticker_info["icon"]}</span>'
+
+
+logo_html = _load_ticker_logo(ticker_info.get("header_image", ""), 72)
+
 st.markdown(
     f"""
-    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-        <span style="font-size: 2.5rem;">{ticker_info['icon']}</span>
+    <div style="margin-bottom: 0.5rem;">
+        {logo_html}
         <div>
             <h1 style="margin: 0; font-size: 1.8rem;">{selected_ticker}</h1>
             <p style="color: #94a3b8 !important; margin: 0; font-size: 1rem;">

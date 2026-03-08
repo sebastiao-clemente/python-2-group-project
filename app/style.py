@@ -108,7 +108,7 @@ def inject_custom_css():
             font-family: 'Orbitron', sans-serif !important;
             color: var(--accent-cyan) !important;
             font-weight: 700 !important;
-            font-size: 2rem !important;
+            font-size: 1.5rem !important;
         }
 
         [data-testid="stMetricDelta"] svg {
