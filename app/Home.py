@@ -162,16 +162,32 @@ with st.expander("📐 View Detailed Data Flow Diagram", expanded=False):
 st.markdown("---")
 
 # ── Companies We Track ───────────────────────────────────────────────
+def _ticker_logo(image_path: str, fallback_icon: str, size: int = 56) -> str:
+    """Return a base64 <img> tag for the company logo, or the emoji fallback."""
+    abs_path = os.path.join(os.path.dirname(__file__), image_path)
+    if os.path.isfile(abs_path):
+        with open(abs_path, "rb") as f:
+            data = base64.b64encode(f.read()).decode()
+        ext = abs_path.rsplit(".", 1)[-1].lower()
+        mime = "image/jpeg" if ext in ("jpg", "jpeg") else f"image/{ext}"
+        return (
+            f'<img src="data:{mime};base64,{data}" '
+            f'style="width:{size}px;height:{size}px;object-fit:contain;margin-bottom:0.4rem;" />'
+        )
+    return f'<div class="icon">{fallback_icon}</div>'
+
+
 st.markdown("## Companies We Track")
 st.markdown("")
 
 ticker_cols = st.columns(len(TICKERS))
 for col, (ticker, info) in zip(ticker_cols, TICKERS.items()):
     with col:
+        logo = _ticker_logo(info.get("image", ""), info["icon"], info.get("logo_size", 56))
         st.markdown(
             f"""
             <div class="feature-box">
-                <div class="icon">{info['icon']}</div>
+                {logo}
                 <h5>{ticker}</h5>
                 <p style="color: #94a3b8 !important; font-size: 0.8rem; margin: 0;">{info['name']}</p>
                 <p style="color: #a855f7 !important; font-size: 0.7rem; margin: 0;">{info['sector']}</p>

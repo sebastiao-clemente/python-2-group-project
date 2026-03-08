@@ -4,12 +4,14 @@ Central place for all constants, tickers, and settings.
 """
 
 # ── Supported Companies ──────────────────────────────────────────────
+# Drop company logos into app/assets/logos/ with the matching filename (e.g. aapl.png).
+# Supported formats: .png, .jpg, .jpeg, .svg, .webp
 TICKERS = {
-    "AAPL": {"name": "Apple Inc.", "sector": "Technology", "icon": "🍎"},
-    "MSFT": {"name": "Microsoft Corp.", "sector": "Technology", "icon": "🪟"},
-    "GOOGL": {"name": "Alphabet Inc.", "sector": "Technology", "icon": "🔍"},
-    "AMZN": {"name": "Amazon.com Inc.", "sector": "Consumer Cyclical", "icon": "📦"},
-    "NVDA": {"name": "NVIDIA Corp.", "sector": "Technology", "icon": "🎮"},
+    "AAPL": {"name": "Apple Inc.", "sector": "Technology", "icon": "", "image": "assets/logos/aapl.png", "logo_size": 56, "header_image": "assets/logos/header/aapl.png"},
+    "MSFT": {"name": "Microsoft Corp.", "sector": "Technology", "icon": "", "image": "assets/logos/msft.png", "logo_size": 56, "header_image": "assets/logos/header/msft.png"},
+    "GOOGL": {"name": "Alphabet Inc.", "sector": "Technology", "icon": "", "image": "assets/logos/googl.png", "logo_size": 56, "header_image": "assets/logos/header/googl.png"},
+    "AMZN": {"name": "Amazon.com Inc.", "sector": "Consumer Cyclical", "icon": "", "image": "assets/logos/amzn.png", "logo_size": 56, "header_image": "assets/logos/header/amzn.png"},
+    "NVDA": {"name": "NVIDIA Corp.", "sector": "Technology", "icon": "", "image": "assets/logos/nvda.png", "logo_size": 56, "header_image": "assets/logos/header/nvda.png"},
 }
 
 TICKER_LIST = list(TICKERS.keys())
