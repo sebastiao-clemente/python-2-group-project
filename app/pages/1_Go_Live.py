@@ -6,6 +6,8 @@ Displays market data, runs ETL + model, and shows predictions.
 import streamlit as st
 import pandas as pd
 import numpy as np
+import base64
+import os
 
 st.set_page_config(page_title="Go Live | AutoTrader", page_icon="📈", layout="wide")
 
@@ -21,16 +23,45 @@ from utils.charts import (
 
 inject_custom_css()
 
+
+def _load_ticker_logo(image_path: str, size: int = 72) -> str:
+    abs_path = os.path.join(os.path.dirname(__file__), "..", image_path)
+    if os.path.isfile(abs_path):
+        with open(abs_path, "rb") as f:
+            data = base64.b64encode(f.read()).decode()
+        ext = abs_path.rsplit(".", 1)[-1].lower()
+        mime = "image/jpeg" if ext in ("jpg", "jpeg") else f"image/{ext}"
+        return (
+            f'<img src="data:{mime};base64,{data}" '
+            f'style="width:{size}px;height:{size}px;object-fit:contain;margin-bottom:0.5rem;" />'
+        )
+    return ""
+
+
 # ── Sidebar Controls ─────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### 📈 Go Live Controls")
+    st.markdown("### Go Live Controls")
     st.markdown("---")
 
     selected_ticker = st.selectbox(
         "Select Company",
         TICKER_LIST,
-        format_func=lambda t: f"{TICKERS[t]['icon']} {t} — {TICKERS[t]['name']}",
+        format_func=lambda t: f"{t} — {TICKERS[t]['name']}",
     )
+
+    _sb_info = TICKERS[selected_ticker]
+    _sb_logo_path = os.path.join(os.path.dirname(__file__), "..", _sb_info.get("header_image", ""))
+    if os.path.isfile(_sb_logo_path):
+        with open(_sb_logo_path, "rb") as _f:
+            _sb_data = base64.b64encode(_f.read()).decode()
+        _sb_ext = _sb_logo_path.rsplit(".", 1)[-1].lower()
+        _sb_mime = "image/jpeg" if _sb_ext in ("jpg", "jpeg") else f"image/{_sb_ext}"
+        st.markdown(
+            f'<div style="text-align:center;padding:0.5rem 0;">'
+            f'<img src="data:{_sb_mime};base64,{_sb_data}" '
+            f'style="max-width:100%;max-height:36px;object-fit:contain;" /></div>',
+            unsafe_allow_html=True,
+        )
 
     lookback_days = st.slider(
         "Historical Data (trading days)",
@@ -54,10 +85,11 @@ with st.sidebar:
 # ── Page Header ──────────────────────────────────────────────────────
 ticker_info = TICKERS[selected_ticker]
 
+_header_logo = _load_ticker_logo(ticker_info.get("header_image", ""), size=72)
 st.markdown(
     f"""
     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-        <span style="font-size: 2.5rem;">{ticker_info['icon']}</span>
+        {_header_logo}
         <div>
             <h1 style="margin: 0; font-size: 1.8rem;">{selected_ticker}</h1>
             <p style="color: #94a3b8 !important; margin: 0; font-size: 1rem;">
@@ -97,7 +129,7 @@ if not features.empty:
         signal, signal_class = "HOLD", "signal-hold"
 
     # Signal Row
-    col_signal, col_gauge1, col_gauge2 = st.columns([1.2, 1, 1])
+    col_signal, col_gauge1, col_gauge2 = st.columns([1.2, 1, 1], vertical_alignment="top")
 
     with col_signal:
         badge_class = "badge-up" if direction == "UP" else "badge-down"
