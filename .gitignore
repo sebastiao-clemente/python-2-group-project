@@ -4,3 +4,6 @@ ml/models/
 
 
 __pycache__/
+data/raw/
+data/*.zip
+
