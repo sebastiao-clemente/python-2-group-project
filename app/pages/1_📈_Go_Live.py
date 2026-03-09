@@ -100,12 +100,14 @@ if not features.empty:
     col_signal, col_gauge1, col_gauge2 = st.columns([1.2, 1, 1])
 
     with col_signal:
-        st.markdown("### 🎯 Today's Signal")
-
         badge_class = "badge-up" if direction == "UP" else "badge-down"
         st.markdown(
             f"""
-            <div class="{signal_class}" style="padding: 1.5rem; margin-top: 0.5rem;">
+            <div class="{signal_class}" style="padding: 1.5rem; height: 250px; box-sizing: border-box; overflow: hidden;">
+                <p style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+                          color: #00d4ff !important; margin-bottom: 0.8rem; letter-spacing: 1px;">
+                    Today's Signal
+                </p>
                 <p style="font-family: 'Rajdhani', sans-serif; font-size: 0.9rem;
                           color: #94a3b8 !important; margin-bottom: 0.5rem; text-transform: uppercase;
                           letter-spacing: 2px;">
@@ -142,7 +144,37 @@ if not processed_df.empty:
     price_change_pct = price_change / prev["price"] * 100
 
     m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("Last Close", f"${latest['price']:.2f}", f"{price_change_pct:+.2f}%")
+
+    _arrow = "▲" if price_change_pct >= 0 else "▼"
+    _badge_color = "#00c853" if price_change_pct >= 0 else "#ff3366"
+    with m1:
+        st.markdown(
+            f"""
+            <div style="position:relative;
+                        background:linear-gradient(135deg,#1a1f2e,#1e2538);
+                        border:1px solid #1e293b;
+                        border-radius:12px;
+                        padding:1rem 1.25rem;
+                        box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+                <p style="font-size:0.85rem; color:#94a3b8; margin:0 0 0.3rem 0;
+                          font-family:'Rajdhani',sans-serif; font-weight:600;
+                          text-transform:uppercase; letter-spacing:1.5px;">Last Close</p>
+                <p style="font-family:'Orbitron',sans-serif; font-size:1.1rem;
+                          color:#00d4ff; font-weight:700; margin:0;">
+                    ${latest['price']:.2f}
+                </p>
+                <div style="position:absolute; top:1rem; right:1.25rem;
+                            background:{_badge_color}22; border:1px solid {_badge_color};
+                            border-radius:4px; padding:2px 6px;
+                            font-size:0.72rem; font-weight:700; color:{_badge_color};
+                            display:flex; align-items:center; gap:3px;">
+                    {_arrow} {price_change_pct:+.2f}%
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     m2.metric("RSI (14)", f"{latest['rsi_14']:.1f}")
     m3.metric("Volatility (10d)", f"{latest['volatility_10d']:.4f}")
     m4.metric("MACD", f"{latest['macd']:.5f}")
