@@ -1,7 +1,4 @@
-__pycache__/
-*.pyc
-*.pyo
 .DS_Store
-.env
-*.pkl
-models/
+data/raw/
+ml/models/
+
