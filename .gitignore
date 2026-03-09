@@ -2,3 +2,5 @@
 data/raw/
 ml/models/
 
+
+__pycache__/
