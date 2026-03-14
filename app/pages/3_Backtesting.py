@@ -298,25 +298,6 @@ if "bt_results" in st.session_state:
         dm5.metric("Win Rate", f"{sm['win_rate']:.1%}" if sm['total_trades'] > 0 else "N/A")
         dm6.metric("Trades", sm["total_trades"])
 
-        st.markdown("")
-
-        # Strategy parameters used
-        with st.expander("Strategy Parameters Used"):
-            if selected_strategy == "Buy & Hold (ML)":
-                sp1, sp2, sp3 = st.columns(3)
-                sp1.metric("Entry Signal", "Bullish DCA entries")
-                sp2.metric("Buy-Ins", "Up to 12 equal allocations")
-                sp3.metric("Txn Cost", f"{transaction_cost_bps} bps per buy")
-            elif selected_strategy == "Buy & Sell (ML)":
-                sp1, sp2, sp3, sp4, sp5 = st.columns(5)
-                sp1.metric("Buy Threshold", "P(UP) ≥ 50%")
-                sp2.metric("Sell Threshold", "P(UP) < 50%")
-                sp3.metric("Max Hold Days", "3")
-                sp4.metric("Stop-Loss", "2%")
-                sp5.metric("Txn Cost", f"{transaction_cost_bps} bps")
-
-        st.markdown("")
-
         # Charts
         tab_trades, tab_drawdown, tab_actions = st.tabs([
             "📈 Equity Curve",
