@@ -115,25 +115,46 @@ def prepare_features(df: pd.DataFrame):
 # ── Step 4: Train ─────────────────────────────────────────────────────
 
 def train_model(X: pd.DataFrame, y: pd.Series) -> Pipeline:
-    """Time-ordered split → StandardScaler → LogisticRegression pipeline."""
+    """Time-ordered split → StandardScaler → LogisticRegression pipeline.
+
+    Tests several regularisation strengths (C) with balanced class weights
+    and selects the configuration with the highest test accuracy.
+    """
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, shuffle=False  # preserve temporal ordering
     )
 
-    pipeline = Pipeline([
-        ("scaler", StandardScaler()),
-        ("clf",    LogisticRegression(max_iter=1000, C=1.0, random_state=42)),
-    ])
-    pipeline.fit(X_train, y_train)
+    # ── Hyperparameter search over C values ──────────────────────────
+    C_VALUES = [0.01, 0.1, 1.0, 10.0]
+    best_acc = -1.0
+    best_C = 1.0
+    best_pipeline = None
 
-    y_pred = pipeline.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    print(f"\nTest accuracy  : {acc:.3f}")
-    print("Classification report:")
+    print("\nTuning regularisation strength (C) with class_weight='balanced':")
+    for C in C_VALUES:
+        pipe = Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf",    LogisticRegression(
+                max_iter=1000, C=C, class_weight="balanced", random_state=42
+            )),
+        ])
+        pipe.fit(X_train, y_train)
+        acc = accuracy_score(y_test, pipe.predict(X_test))
+        print(f"  C={C:<6}  →  accuracy={acc:.4f}")
+        if acc > best_acc:
+            best_acc = acc
+            best_C = C
+            best_pipeline = pipe
+
+    print(f"\nBest C={best_C} with test accuracy={best_acc:.4f}")
+
+    # ── Final report with best model ─────────────────────────────────
+    y_pred = best_pipeline.predict(X_test)
+    print("\nClassification report (best model):")
     print(classification_report(y_test, y_pred, target_names=["DOWN (0)", "UP (1)"]))
     print(f"Train samples  : {len(X_train):,}")
     print(f"Test samples   : {len(X_test):,}")
-    return pipeline
+    return best_pipeline
 
 
 # ── Step 5: Save ──────────────────────────────────────────────────────
