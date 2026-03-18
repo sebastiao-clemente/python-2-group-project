@@ -9,7 +9,7 @@ fontsize: 11pt
 
 # 1. Introduction
 
-AutoTrader is an automated daily trading system that predicts next-day stock price movements for five major US companies using machine learning. The system combines a data analytics module (ETL pipeline and ML model) with an interactive web application built in Streamlit, allowing users to view real-time predictions, analyze model performance, and backtest trading strategies.
+AutoTrader is an automated daily trading system that predicts next-day stock price movements for five major US companies using Machine Learning. The system combines a data analytics module (ETL pipeline and ML model) with an interactive web application built in Streamlit, allowing users to view real-time predictions, analyze model performance, and backtest trading strategies.
 
 The five companies tracked are **Apple (AAPL)**, **Microsoft (MSFT)**, **Alphabet (GOOG)**, **Amazon (AMZN)**, and **NVIDIA (NVDA)**, representing a cross-section of the US technology and consumer sectors.
 
