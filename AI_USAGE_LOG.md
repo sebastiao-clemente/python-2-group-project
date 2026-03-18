@@ -1,6 +1,6 @@
 # AI Usage Log – Automated Daily Trading System
 
-This document reflects how AI (maintl Claude Code) was used throughout the development of this project, what worked well, what was harder to get right, and what lessons were learned about effective AI-assisted development.
+This document reflects how AI (mainly Claude Code, Perplexity and CODEX) was used throughout the development of this project, what worked well, what was harder to get right, and what lessons were learned about effective AI-assisted development.
 
 ---
 
@@ -20,8 +20,6 @@ This document reflects how AI (maintl Claude Code) was used throughout the devel
 
 **What was harder:** This approach was frustrating. When you ask AI to change "the whole design," it tends to either change too much (breaking things that were working) or make conservative changes that don't fully match the desired result. It was difficult to communicate a visual "feel" in text, and iterating on vague feedback like "make it look more futuristic" didn't produce consistent results. The AI and I went back and forth several times without converging on the right outcome.
 
-**Lesson learned:** Broad aesthetic changes are hard to communicate to AI. It works better as a precise code editor than as a designer.
-
 ---
 
 ## 3. Precise Formatting Modifications
@@ -32,8 +30,6 @@ This document reflects how AI (maintl Claude Code) was used throughout the devel
 - "For the price_change_pct in the "go live" tab, make it so if the change is positive, a green rectangle pointing up appears next to it and if the price change is negative, a red rectangle pointing down appears next to it".
 
 **What worked:** This approach worked much better. AI is very effective at making precise, well-scoped edits when you tell it exactly what to change and where. The results were predictable and easy to verify. Giving the AI specific CSS property names, values, and element descriptions removed ambiguity and led to correct changes on the first or second attempt.
-
-**Lesson learned:** The more specific and technical the prompt, the better the AI performs.
 
 ---
 
@@ -52,8 +48,6 @@ This document reflects how AI (maintl Claude Code) was used throughout the devel
 **What I asked for:** Remove the emoji prefixes from the page tabs in the Streamlit sidebar (e.g., "📈 Go Live" → "Go Live").
 
 **What worked:** The AI correctly identified that Streamlit generates sidebar navigation labels directly from filenames, so the only way to remove the emojis was to rename the files using `git mv` to preserve git history. This was a non-obvious technical detail that I wouldn't have known immediately.
-
-**What was harder:** Nothing particularly difficult here, once the root cause (filename-based nav) was understood, the fix was straightforward.
 
 ---
 
@@ -81,4 +75,27 @@ The font size on the Last Close price also needed iteration: using `1.5rem` in a
 
 **What was harder:** Git conflict resolution in complex multi-contributor scenarios is error-prone even with AI assistance. The AI made a mistake by running `git clean -fd` which deleted untracked files (the logo PNGs). Recovering from cascading git errors required careful diagnosis at each step. This is an area where AI can move quickly but also cause hard-to-reverse damage if not careful.
 
+---
+
+## 8. Full Project Review Against Assignment Requirements
+
+**What I asked for:** A comprehensive review of the entire repository against the assignment rubric to identify missing deliverables, code gaps, and areas for improvement before submission.
+
+**What worked:** The AI compared every requirement (ETL, ML model, API wrapper, web app, deployment, deliverables) against our codebase and produced a prioritised action plan. It identified the gaps I hadn't noticed.
+
+---
+
+## 9. ML Model Improvement
+
+**What I asked for:** Investigated whether the model's accuracy could be improved, and whether the Model Insights page was displaying accurate metrics.
+
+**What worked:** The AI identified that the Model Insights page was computing metrics on live/synthetic data rather than the actual training test set, meaning the displayed values could be misleading. It also explained why Logistic Regression plateaus around 51% for daily stock prediction and suggested GradientBoosting as a practical upgrade.
+
+---
+
+## 10. AI Usage Log Update
+
+**What I asked for:** Update this log with brief summaries of all recent AI-assisted conversations.
+
+**What worked:** Straightforward documentation task, AI helped me summarize our chats.
 ---
