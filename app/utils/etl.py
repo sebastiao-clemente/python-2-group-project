@@ -173,7 +173,10 @@ def add_target(df: pd.DataFrame) -> pd.DataFrame:
     target = 0 if next day's close <= today's close (price goes DOWN)
     """
     df = df.copy()
-    df["target"] = (df["price"].shift(-1) > df["price"]).astype(int)
+    next_price = df["price"].shift(-1)
+    target = (next_price > df["price"]).astype(float)
+    target[next_price.isna()] = np.nan
+    df["target"] = target
     return df
 
 

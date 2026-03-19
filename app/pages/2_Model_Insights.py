@@ -52,7 +52,12 @@ with st.sidebar:
 
 # ── Load Model & Data ────────────────────────────────────────────────
 model = load_model(selected_ticker)
-processed_df = load_processed_data(selected_ticker, days=504, api_key=api_key)
+processed_df = load_processed_data(
+    selected_ticker,
+    days=504,
+    api_key=api_key,
+    include_target=True,
+)
 pred_history = get_prediction_history(selected_ticker, model, n_days=120, api_key=api_key)
 
 available_features = [f for f in MODEL_FEATURES if f in processed_df.columns]
@@ -232,11 +237,11 @@ if not pred_history.empty and pred_history["actual"].notna().any():
         report = classification_report(y_true, y_pred, target_names=["DOWN", "UP"], output_dict=True)
 
         st.markdown(
-            """
+            f"""
         <div class="glass-card" style="padding: 0rem;">
             <h4 style="font-family: 'Orbitron', sans-serif; color: #00d4ff !important;
                        font-size: 0.85rem; margin-bottom: 0rem; margin-left: 1rem">
-                Classification Report
+                Classification Report ({len(valid)}-day window)
             </h4>
         </div>
         """,
@@ -392,4 +397,3 @@ with tab_eval:
         perfect prediction but consistent edge over random.
         """
     )
-

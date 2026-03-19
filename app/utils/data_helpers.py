@@ -123,7 +123,12 @@ def load_price_data(ticker: str, days: int = 504, api_key: str = None) -> pd.Dat
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def load_processed_data(ticker: str, days: int = 504, api_key: str = None) -> pd.DataFrame:
+def load_processed_data(
+    ticker: str,
+    days: int = 504,
+    api_key: str = None,
+    include_target: bool = False,
+) -> pd.DataFrame:
     """
     Load price data and run the full ETL pipeline.
 
@@ -131,7 +136,7 @@ def load_processed_data(ticker: str, days: int = 504, api_key: str = None) -> pd
         Processed DataFrame with all features and target.
     """
     raw = load_price_data(ticker, days, api_key)
-    processed = run_etl(raw, include_target=True)
+    processed = run_etl(raw, include_target=include_target)
     return processed
 
 
@@ -142,7 +147,7 @@ def get_latest_features(ticker: str, api_key: str = None) -> pd.DataFrame:
     Returns:
         Single-row DataFrame with feature columns.
     """
-    df = load_processed_data(ticker, days=100, api_key=api_key)
+    df = load_processed_data(ticker, days=100, api_key=api_key, include_target=False)
     if df.empty:
         return pd.DataFrame()
 
@@ -160,7 +165,12 @@ def get_prediction_history(ticker: str, model, n_days: int = 60, api_key: str = 
     """
     from utils.config import MODEL_FEATURES
 
-    df = load_processed_data(ticker, days=max(n_days + 100, 200), api_key=api_key)
+    df = load_processed_data(
+        ticker,
+        days=max(n_days + 100, 200),
+        api_key=api_key,
+        include_target=True,
+    )
     if df.empty:
         return pd.DataFrame()
 
